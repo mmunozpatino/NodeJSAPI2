@@ -4,20 +4,33 @@ var express = require ("express"),
    bodyParser = require("body-parser"),
    methodOverride = require ("method-override"),
    mongoose = require('mongoose');
-
+var model = require('./models/tvshow')
+//importamos controllers
+var tvshowCtrl = require('./controllers/tvshows');
 
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(methodOverride());
 
+//API routes
 var router = express.Router();
 
 router.get('/', function(req, res) {
-   res.send("Hello word!")
-})
+   res.send("Hello word!");
+   next();
+});
 
-app.use(router);
+router.route('/tvshows')
+   .get(tvshowCtrl.findAllTVShows)
+   .post(tvshowCtrl.addTVShow);
+
+router.route('/tvshows/:id')
+   .get(tvshowCtrl.findById)
+   .put(tvshowCtrl.updateTVShow)
+   .delete(tvshowCtrl.deleteTVShow);
+
+app.use('/api', router);
 
 //definimos puerto a usar
 mongoose.connect('mongodb://localhost:27017/tvshows', function(err, res){
